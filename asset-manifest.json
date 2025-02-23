@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/tranquilsite/static/css/main.0ceb67c0.css",
+    "main.js": "/tranquilsite/static/js/main.23cbbf5b.js",
+    "index.html": "/tranquilsite/index.html",
+    "main.0ceb67c0.css.map": "/tranquilsite/static/css/main.0ceb67c0.css.map",
+    "main.23cbbf5b.js.map": "/tranquilsite/static/js/main.23cbbf5b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0ceb67c0.css",
+    "static/js/main.23cbbf5b.js"
+  ]
+}
