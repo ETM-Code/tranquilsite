@@ -1,0 +1,157 @@
+/* Button base styles */
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 200ms ease-in-out;
+  min-width: fit-content;
+  height: 2.5rem;
+  border: none;
+}
+
+/* Profile button */
+.profile-button {
+  composes: action-button;
+  background-color: rgba(124, 58, 237, 0.1);
+  color: #7C3AED;
+}
+.profile-button:hover {
+  background-color: rgba(124, 58, 237, 0.15);
+}
+.profile-button:active {
+  background-color: rgba(124, 58, 237, 0.2);
+}
+
+/* Connect services button */
+.connect-button {
+  composes: action-button;
+  background-color: rgba(5, 150, 105, 0.1);
+  color: #059669;
+}
+.connect-button:hover {
+  background-color: rgba(5, 150, 105, 0.15);
+}
+.connect-button:active {
+  background-color: rgba(5, 150, 105, 0.2);
+}
+
+/* Send button */
+.send-button {
+  composes: action-button;
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #2563EB;
+}
+.send-button:hover {
+  background-color: rgba(37, 99, 235, 0.15);
+}
+.send-button:active {
+  background-color: rgba(37, 99, 235, 0.2);
+}
+
+/* Clear button */
+.clear-button {
+  composes: action-button;
+  background-color: rgba(225, 29, 72, 0.1);
+  color: #E11D48;
+}
+.clear-button:hover {
+  background-color: rgba(225, 29, 72, 0.15);
+}
+.clear-button:active {
+  background-color: rgba(225, 29, 72, 0.2);
+}
+
+/* Create task button */
+.task-button {
+  composes: action-button;
+  background-color: rgba(217, 119, 6, 0.1);
+  color: #D97706;
+}
+.task-button:hover {
+  background-color: rgba(217, 119, 6, 0.15);
+}
+.task-button:active {
+  background-color: rgba(217, 119, 6, 0.2);
+}
+
+/* Logout button */
+.logout-button {
+  composes: action-button;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+.logout-button:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+}
+.logout-button:active {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Login buttons */
+.login-button {
+  composes: action-button;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  color: white !important;
+  justify-content: flex-start;
+  gap: 1rem;
+  height: 3rem;
+}
+
+.login-button span {
+  color: white !important;
+}
+
+.login-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white !important;
+}
+
+.login-button-google {
+  composes: login-button;
+  background-color: #EA4335 !important;
+}
+
+.login-button-google:hover {
+  background-color: #D33426 !important;
+}
+
+.login-button-microsoft {
+  composes: login-button;
+  background-color: #05A6F0 !important;
+}
+
+.login-button-microsoft:hover {
+  background-color: #0496DB !important;
+}
+
+.login-button-apple {
+  composes: login-button;
+  background-color: #000000 !important;
+}
+
+.login-button-apple:hover {
+  background-color: #1A1A1A !important;
+}
+
+/* Icon styles */
+.button-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Disabled state */
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+} 

@@ -1,0 +1,72 @@
+/* Login container */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    max-width: 480px;
+    width: 90%;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.login-subtitle {
+    color: #6B5744;
+    font-size: 1.125rem;
+    margin: 1rem 0 2rem;
+    line-height: 1.5;
+}
+
+.login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 320px;
+}
+
+.login-buttons button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+/* Provider-specific button styles */
+.login-buttons button:nth-child(1) {
+    background-color: #E67E22;  /* Google - Earthy orange */
+}
+
+.login-buttons button:nth-child(1):hover {
+    background-color: #D35400;
+}
+
+.login-buttons button:nth-child(2) {
+    background-color: #C17817;  /* Microsoft - Darker orange */
+}
+
+.login-buttons button:nth-child(2):hover {
+    background-color: #A66615;
+}
+
+.login-buttons button:nth-child(3) {
+    background-color: #8B7355;  /* Apple - Earthy brown */
+}
+
+.login-buttons button:nth-child(3):hover {
+    background-color: #9C8465;
+}
+
+/* Provider icons */
+.login-buttons button::before {
+    content: '';
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}

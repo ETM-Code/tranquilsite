@@ -1,0 +1,91 @@
+.chatbot-container {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    width: 400px;
+    /* Match your desired width */
+    height: 400px;
+    /* Fixed height to prevent page resizing */
+    margin: 2rem auto;
+    padding: 1rem;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    /* Ensures padding doesn’t add to total height */
+}
+
+.chatbot-header {
+    text-align: center;
+}
+
+/* This is the scrollable area for messages */
+.chatbot-messages {
+    flex: 1;
+    /* Fill remaining vertical space */
+    overflow-y: auto;
+    /* Enable vertical scroll when messages overflow */
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.chat-message {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    max-width: 80%;
+}
+
+/* User messages on the right */
+.chat-message.user {
+    background-color: #daf8da;
+    margin-left: auto;
+    text-align: right;
+}
+
+/* Bot messages on the left */
+.chat-message.bot {
+    background-color: #eee;
+    margin-right: auto;
+    text-align: left;
+}
+
+.chatbot-input {
+    display: flex;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.chatbot-input input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.send-button {
+    color: #f0f0f0;
+    background-color: #8D75E6;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.voice-button {
+    color: #f0f0f0;
+    background-color: #8D75E6;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+
+.send-button:hover {
+    background-color: #6D45C6;
+}
+
+.voice-button:hover {
+    background-color: #6D45C6;
+}

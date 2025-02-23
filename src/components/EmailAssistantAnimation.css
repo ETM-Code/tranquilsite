@@ -1,0 +1,123 @@
+/* The outer container: fixed width so we can position the icon from right to left */
+.animation-container {
+    position: relative;
+    width: 300px;
+    /* Adjust as needed for your text length */
+    margin: 2rem auto;
+    /* Center horizontally on the page */
+    text-align: center;
+    /* Center the title text */
+}
+
+/* The title is just static text in normal flow */
+.assistant-title {
+    font-size: 1.5rem;
+    margin: 0;
+    line-height: 1.2;
+    opacity: 0;
+    /* Start invisible */
+    animation: fadeInTitle 4s forwards;
+    /* Fade in over 3 seconds */
+}
+
+@keyframes fadeInTitle {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* The icon + notification bubble is absolutely positioned over the container */
+.icon-and-notif {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    /* Start on the right edge of the container */
+    transform: translateY(-50%);
+    /* Center it vertically against the text */
+
+    /* Slide from right (100%) to left (0%) over 3s. 
+     "linear" ensures a constant speed with no pause. */
+    animation: slideIn 2s forwards;
+}
+
+/* The email icon itself */
+.email-icon {
+    width: 40px;
+    /* Adjust size */
+    height: auto;
+    display: inline-block;
+}
+
+/* Notification bubble base styling */
+.notification-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    /* Place the bubble in the top-right corner of the icon */
+    background-color: #ff4d4d;
+    color: #fff;
+    border-radius: 50%;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* The "99+" bubble fades out after 1s */
+#notif-start {
+    animation: fadeOutCount 0.5s forwards 1s;
+}
+
+/* The "0" bubble starts invisible and fades in at 2s */
+#notif-end {
+    opacity: 0;
+    animation: fadeInCount 1s forwards 1.5s;
+}
+
+/* --- Keyframes --- */
+
+/* Moves the .icon-and-notif container from right (100%) to left (0%) */
+@keyframes passThrough {
+    0% {
+        left: 0%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* Fades out the "99+" bubble */
+@keyframes fadeOutCount {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Fades in the "0" bubble */
+@keyframes fadeInCount {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
