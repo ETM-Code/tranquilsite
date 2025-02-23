@@ -2,6 +2,7 @@
   "name": "tranquilsite",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://eoghancollins.github.io/tranquilsite",
   "dependencies": {
     "@heroicons/react": "^2.1.1",
     "@testing-library/dom": "^10.4.0",
