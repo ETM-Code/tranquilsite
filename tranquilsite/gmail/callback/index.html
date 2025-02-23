@@ -7,21 +7,12 @@
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         const state = urlParams.get('state');
-        const error = urlParams.get('error');
         
-        if (error) {
-            // Handle error case
-            window.location.href = `/tranquilsite/#/gmail/callback?error=${error}`;
-        } else if (code && state) {
-            // Handle successful auth
-            window.location.href = `/tranquilsite/#/gmail/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
-        } else {
-            // Handle invalid callback
-            window.location.href = '/tranquilsite/#/gmail/callback?error=invalid_callback';
-        }
+        // Redirect to the app's callback route with the parameters
+        window.location.href = `/#/gmail/callback?code=${code}&state=${state}`;
     </script>
 </head>
 <body>
-    <p>Processing Gmail authentication callback...</p>
+    <p>Redirecting...</p>
 </body>
 </html> 
