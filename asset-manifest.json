@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/tranquilsite/static/css/main.dd15d0e3.css",
-    "main.js": "/tranquilsite/static/js/main.a5efa822.js",
+    "main.js": "/tranquilsite/static/js/main.5dfff6ad.js",
     "index.html": "/tranquilsite/index.html",
     "main.dd15d0e3.css.map": "/tranquilsite/static/css/main.dd15d0e3.css.map",
-    "main.a5efa822.js.map": "/tranquilsite/static/js/main.a5efa822.js.map"
+    "main.5dfff6ad.js.map": "/tranquilsite/static/js/main.5dfff6ad.js.map"
   },
   "entrypoints": [
     "static/css/main.dd15d0e3.css",
-    "static/js/main.a5efa822.js"
+    "static/js/main.5dfff6ad.js"
   ]
 }
