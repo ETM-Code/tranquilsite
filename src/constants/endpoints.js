@@ -4,12 +4,13 @@
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 // You can update this when running ngrok
-const NGROK_URL = "https://deb8-185-65-135-247.ngrok-free.app"; // Update this when you start ngrok
+const NGROK_URL = "https://1722-185-65-135-247.ngrok-free.app"; // Update this when you start ngrok
+const LOCAL_URL = "http://localhost:8000";  // Make sure this matches your FastAPI port
 
 // Choose the appropriate backend URL
 const BACKEND_URL = isDevelopment 
-  ? "http://localhost:8000"  // Local development
-  : NGROK_URL;               // Using ngrok for GitHub Pages
+  ? LOCAL_URL        // Local development
+  : NGROK_URL;       // Using ngrok for GitHub Pages
 
 // Main API endpoints
 export const ENDPOINTS = {
