@@ -127,7 +127,7 @@ function App() {
           setIsAuthenticated(true);
         }} />
       } />
-      <Route path="/TranquilSite/gmail/callback" element={<GmailCallback />} />
+      <Route path="/tranquilsite/gmail/callback" element={<GmailCallback />} />
       <Route path="/gmail/callback" element={<GmailCallback />} />
       <Route path="/" element={
         !isAuthenticated ? <Navigate to="/login" /> : (
