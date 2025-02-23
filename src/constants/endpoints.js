@@ -1,53 +1,66 @@
 // src/constants/endpoints.js
 
 // Base URL configuration
-const BASE_URL = "http://localhost:8000"; // Default to localhost, override with environment variable if needed
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+// You can update this when running ngrok
+const NGROK_URL = "https://deb8-185-65-135-247.ngrok-free.app"; // Update this when you start ngrok
+
+// Choose the appropriate backend URL
+const BACKEND_URL = isDevelopment 
+  ? "http://localhost:8000"  // Local development
+  : NGROK_URL;               // Using ngrok for GitHub Pages
 
 // Main API endpoints
 export const ENDPOINTS = {
   // Core interaction endpoint
-  PROCESS_INPUT: `${BASE_URL}/process`,
+  PROCESS_INPUT: `${BACKEND_URL}/process`,
 
   // Task management endpoints
-  GET_TASKS: `${BASE_URL}/tasks`,
-  CREATE_TASK: `${BASE_URL}/tasks`,
-  GET_TASK: (taskId) => `${BASE_URL}/tasks/${taskId}`,
-  UPDATE_TASK_STATUS: (taskId) => `${BASE_URL}/tasks/${taskId}/status`,
-  UPDATE_TASK_URGENCY: (taskId) => `${BASE_URL}/tasks/${taskId}/urgency`,
-  UPDATE_TASK_NOTES: (taskId) => `${BASE_URL}/tasks/${taskId}/notes`,
-  UPDATE_TASK_DESCRIPTION: (taskId) => `${BASE_URL}/tasks/${taskId}/description`,
+  GET_TASKS: `${BACKEND_URL}/tasks`,
+  CREATE_TASK: `${BACKEND_URL}/tasks`,
+  GET_TASK: (taskId) => `${BACKEND_URL}/tasks/${taskId}`,
+  UPDATE_TASK_STATUS: (taskId) => `${BACKEND_URL}/tasks/${taskId}/status`,
+  UPDATE_TASK_URGENCY: (taskId) => `${BACKEND_URL}/tasks/${taskId}/urgency`,
+  UPDATE_TASK_NOTES: (taskId) => `${BACKEND_URL}/tasks/${taskId}/notes`,
+  UPDATE_TASK_DESCRIPTION: (taskId) => `${BACKEND_URL}/tasks/${taskId}/description`,
 
   // Profile management endpoints
-  GET_PROFILE: `${BASE_URL}/profile`,
-  UPDATE_PROFILE: `${BASE_URL}/profile`,
-  GET_RAW_PROFILE: `${BASE_URL}/profile/raw`,
-  CLEAR_PROFILE: `${BASE_URL}/profile`,
+  GET_PROFILE: `${BACKEND_URL}/profile`,
+  UPDATE_PROFILE: `${BACKEND_URL}/profile`,
+  GET_RAW_PROFILE: `${BACKEND_URL}/profile/raw`,
+  CLEAR_PROFILE: `${BACKEND_URL}/profile`,
 
   // Gmail integration endpoints
-  GMAIL_AUTH: `${BASE_URL}/gmail/auth`,
-  GMAIL_CALLBACK: `${BASE_URL}/gmail/callback`,
-  GMAIL_STATUS: `${BASE_URL}/gmail/status`,
-  GMAIL_PROCESS: `${BASE_URL}/gmail/process`,
-  GMAIL_REVOKE: `${BASE_URL}/gmail/revoke`,
+  GMAIL_AUTH: `${BACKEND_URL}/gmail/auth`,
+  GMAIL_CALLBACK: `${BACKEND_URL}/gmail/callback`,
+  GMAIL_STATUS: `${BACKEND_URL}/gmail/status`,
+  GMAIL_PROCESS: `${BACKEND_URL}/gmail/process`,
+  GMAIL_REVOKE: `${BACKEND_URL}/gmail/revoke`,
 
   // System endpoints
-  HEALTH_CHECK: `${BASE_URL}/health`,
+  HEALTH_CHECK: `${BACKEND_URL}/health`,
 
-  // Make BASE_URL available for other modules
-  BASE_URL
+  // Make BACKEND_URL available for other modules
+  BACKEND_URL
 };
 
 // HTTP request configurations
 export const REQUEST_CONFIG = {
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
+  mode: 'cors',
+  credentials: 'include', // Important for CORS
   timeoutMs: 30000 // 30 second timeout
 };
 
 // WebSocket configuration (if needed later)
 export const WS_CONFIG = {
-  url: `ws://${BASE_URL.split("//")[1]}/ws`,
+  url: isDevelopment 
+    ? `ws://localhost:8000/ws`
+    : `wss://${NGROK_URL.split("//")[1]}/ws`,
   reconnectIntervalMs: 3000
 };
 
