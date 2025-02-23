@@ -5,6 +5,7 @@ import { TASK_STATUS, URGENCY_LEVELS } from '../constants/endpoints';
 import HypersphereButton from './HypersphereButton';
 import './GeometricButton.css';
 import './ButtonStyles.css';
+import './Chat.css';
 import { PaperAirplaneIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 const Chat = () => {
@@ -17,33 +18,20 @@ const Chat = () => {
     currentTaskId,
     selectTask,
     clearError,
-    clearChatHistory
+    clearChatHistory,
+    setChatHistory
   } = useApp();
 
   const [input, setInput] = useState('');
+  const [streamingMessage, setStreamingMessage] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
-
-  const handleClear = () => {
-    // Clear chat history through context
-    if (typeof clearChatHistory === 'function') {
-      clearChatHistory();
-    }
-  };
-
-  const handleGenerateReport = async () => {
-    try {
-      clearError();
-      await processUserInput("Generate a report");
-    } catch (err) {
-      console.error('Error generating report:', err);
-    }
-  };
 
   // Auto-scroll to bottom when chat updates
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatHistory]);
+  }, [chatHistory, streamingMessage]);
 
   // Focus input on mount
   useEffect(() => {
@@ -67,27 +55,59 @@ const Chat = () => {
         return;
       }
 
-      // Process input through the AI
-      await processUserInput(userInput);
+      // Add user message immediately
+      const userMessage = { role: 'user', content: userInput };
+      setChatHistory(prev => [...prev, userMessage]);
+
+      // Start streaming
+      setIsStreaming(true);
+      setStreamingMessage('');
+
+      // Process input through the AI with streaming
+      await processUserInput(userInput, (chunk) => {
+        if (chunk.content) {
+          setStreamingMessage(prev => prev + chunk.content);
+        }
+      });
+
+      // Add final message to chat history and clear streaming
+      const finalMessage = { role: 'assistant', content: streamingMessage };
+      setChatHistory(prev => [...prev, finalMessage]);
+      setStreamingMessage('');
+      setIsStreaming(false);
     } catch (err) {
       console.error('Error processing input:', err);
+      setIsStreaming(false);
+    }
+  };
+
+  const handleClear = () => {
+    clearChatHistory();
+    setStreamingMessage('');
+    setIsStreaming(false);
+    setInput('');
+  };
+
+  const handleGenerateReport = async () => {
+    try {
+      clearError();
+      await processUserInput("Generate a report");
+    } catch (err) {
+      console.error('Error generating report:', err);
     }
   };
 
   const renderMessage = (message, index) => {
     const isUser = message.role === 'user';
-    const messageClass = isUser ? 'bg-blue-100' : 'bg-gray-100';
-    const alignClass = isUser ? 'ml-auto' : 'mr-auto';
-
     return (
       <div
         key={index}
-        className={`max-w-3/4 rounded-lg p-3 mb-4 ${messageClass} ${alignClass}`}
+        className={`chat-message ${isUser ? 'user' : 'bot'} fade-in`}
       >
-        <div className="font-semibold mb-1">
-          {isUser ? 'You' : 'Tranquil'}
+        <div className="message-content">
+          <div className="message-sender">{isUser ? 'You' : 'Tranquil'}</div>
+          <div className="message-text">{message.content}</div>
         </div>
-        <div className="whitespace-pre-wrap">{message.content}</div>
       </div>
     );
   };
@@ -108,72 +128,83 @@ const Chat = () => {
     };
 
     return (
-      <div className={`inline-flex items-center rounded-full px-3 py-1 text-sm
-        ${urgencyColors[task.urgency]} ${statusColors[task.status]} border-2`}>
+      <div className={`task-badge ${urgencyColors[task.urgency]} ${statusColors[task.status]}`}>
         #{task.id} • Urgency {task.urgency}
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 relative">
-        {chatHistory.length === 0 && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+    <div className="chat-interface">
+      <div className="chat-header">
+        <h2>Chat</h2>
+        {currentTaskId && tasks.find(t => t.id === currentTaskId) && (
+          renderTaskBadge(tasks.find(t => t.id === currentTaskId))
+        )}
+      </div>
+
+      <div className="chat-messages">
+        {chatHistory.length === 0 ? (
+          <div className="empty-state">
             <HypersphereButton onClick={handleGenerateReport} />
           </div>
-        )}
-        {chatHistory.map((message, index) => renderMessage(message, index))}
-        {isLoading && (
-          <div className="text-gray-500 italic">Tranquil is thinking...</div>
-        )}
-        {error && (
-          <div className="text-red-500 p-3 rounded bg-red-100">
-            Error: {error}
-          </div>
+        ) : (
+          <>
+            {chatHistory.map((message, index) => renderMessage(message, index))}
+            {isStreaming && (
+              <div className="chat-message bot fade-in">
+                <div className="message-content">
+                  <div className="message-sender">Tranquil</div>
+                  <div className="message-text">{streamingMessage}</div>
+                </div>
+              </div>
+            )}
+            {isLoading && !isStreaming && (
+              <div className="loading-message">Tranquil is thinking...</div>
+            )}
+            {error && (
+              <div className="error-message">
+                Error: {error}
+              </div>
+            )}
+          </>
         )}
         <div ref={chatEndRef} />
       </div>
 
-      {/* Current task indicator */}
-      {currentTaskId && tasks.find(t => t.id === currentTaskId) && (
-        <div className="px-4 py-2 bg-gray-100 border-t">
-          {renderTaskBadge(tasks.find(t => t.id === currentTaskId))}
-        </div>
-      )}
-
-      {/* Input form */}
-      <form onSubmit={handleSubmit} className="border-t p-4">
-        <div className="flex space-x-4">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={isLoading}
-          />
-          <button
-            type="button"
-            onClick={handleClear}
-            className="clear-button"
-            disabled={isLoading || chatHistory.length === 0}
-          >
-            <TrashIcon className="button-icon" aria-hidden="true" />
-            <span className="button-text">Clear</span>
-          </button>
-          <button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-            className="send-button"
-          >
-            <PaperAirplaneIcon className="button-icon" aria-hidden="true" />
-            <span className="button-text">Send</span>
-          </button>
-        </div>
-      </form>
+      <div className="chat-input-area">
+        <form onSubmit={handleSubmit}>
+          <div className="input-container">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              disabled={isLoading}
+            />
+            <div className="button-group">
+              <button
+                type="button"
+                onClick={handleClear}
+                className="clear-button"
+                disabled={isLoading || chatHistory.length === 0}
+              >
+                <TrashIcon className="button-icon" />
+                Clear
+              </button>
+              <button
+                type="submit"
+                className="send-button"
+                disabled={isLoading || !input.trim()}
+              >
+                <PaperAirplaneIcon className="button-icon" />
+                Send
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

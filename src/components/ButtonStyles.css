@@ -27,19 +27,6 @@
   background-color: rgba(124, 58, 237, 0.2);
 }
 
-/* Connect services button */
-.connect-button {
-  composes: action-button;
-  background-color: rgba(5, 150, 105, 0.1);
-  color: #059669;
-}
-.connect-button:hover {
-  background-color: rgba(5, 150, 105, 0.15);
-}
-.connect-button:active {
-  background-color: rgba(5, 150, 105, 0.2);
-}
-
 /* Send button */
 .send-button {
   composes: action-button;

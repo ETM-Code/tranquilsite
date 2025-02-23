@@ -187,7 +187,8 @@ export const AppProvider = ({ children }) => {
     // State setters
     setError: (err) => setError(err),
     clearError: () => setError(null),
-    clearChatHistory: () => setChatHistory([])
+    clearChatHistory: () => setChatHistory([]),
+    setChatHistory
   };
 
   return (

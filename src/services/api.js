@@ -10,13 +10,68 @@ const handleResponse = async (response) => {
 };
 
 // Core interaction service
-export const processInput = async (text, context = {}) => {
-  const response = await fetch(ENDPOINTS.PROCESS_INPUT, {
-    ...REQUEST_CONFIG,
-    method: 'POST',
-    body: JSON.stringify({ text, context })
-  });
-  return handleResponse(response);
+export const processInput = async (text, context = {}, onChunk = null) => {
+  try {
+    const response = await fetch(ENDPOINTS.PROCESS_INPUT, {
+      ...REQUEST_CONFIG,
+      method: 'POST',
+      body: JSON.stringify({ text, context }),
+      // Enable streaming
+      headers: {
+        ...REQUEST_CONFIG.headers,
+        'Accept': 'text/event-stream',
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!onChunk) {
+      // If no streaming handler provided, fall back to regular JSON response
+      return handleResponse(response);
+    }
+
+    // Handle streaming response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // Keep the last incomplete line in the buffer
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(5));
+            onChunk(data);
+          } catch (e) {
+            console.error('Error parsing SSE data:', e);
+          }
+        }
+      }
+    }
+
+    // Process any remaining data in the buffer
+    if (buffer) {
+      try {
+        const data = JSON.parse(buffer.replace(/^data: /, ''));
+        onChunk(data);
+      } catch (e) {
+        console.error('Error parsing final SSE data:', e);
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in processInput:', error);
+    throw error;
+  }
 };
 
 // Task management services

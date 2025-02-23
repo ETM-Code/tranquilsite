@@ -11,6 +11,7 @@ import './components/ButtonStyles.css';
 import { UserCircleIcon, ArrowPathIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid';
 import { startGmailAuth, checkGmailStatus } from './services/gmail';
 import { auth } from './firebase';
+import ServiceConnections from './components/ServiceConnections';
 
 function App() {
   const navigate = useNavigate();
@@ -131,111 +132,77 @@ function App() {
         !isAuthenticated ? <Navigate to="/login" /> : (
           <AppProvider>
             <div className="App">
-              <header className="container">
-                <div className="flex justify-between items-center">
+              <header className="app-header">
+                <div className="header-content">
                   <h1>Tranquil</h1>
-                  <div className="flex gap-4">
+                  <div className="header-actions">
                     <button
                       onClick={() => setIsProfileOpen(true)}
-                      className="profile-button"
+                      className="header-button"
                     >
                       <UserCircleIcon className="button-icon" aria-hidden="true" />
-                      <span className="button-text">Profile</span>
+                      Profile
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="logout-button"
+                      className="header-button"
                     >
                       <ArrowRightOnRectangleIcon className="button-icon" aria-hidden="true" />
-                      <span className="button-text">Logout</span>
+                      Logout
                     </button>
                   </div>
                 </div>
                 {error && (
-                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
-                    <span className="block sm:inline">{error}</span>
-                    <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={() => setError(null)}>
-                      <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <div className="error-alert" role="alert">
+                    <span>{error}</span>
+                    <button onClick={() => setError(null)} className="error-close">
+                      <svg className="h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <title>Close</title>
                         <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
                       </svg>
-                    </span>
+                    </button>
                   </div>
                 )}
               </header>
 
-              <main>
-                <div className="min-h-screen bg-gray-100">
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Task List Section */}
-                    <div className="lg:w-1/3">
-                      <div className="bg-white shadow rounded-lg h-[calc(100vh-12rem)] overflow-y-auto">
-                        <div className="card">
-                          <div className="card-header">
-                            <div className="card-header-content">
-                              <h2>Tasks & Opportunities</h2>
-                            </div>
-                            <div style={{ position: 'relative' }}>
-                              <button
-                                className="connect-button"
-                                onClick={() => setIsServicesMenuOpen(!isServicesMenuOpen)}
-                              >
-                                <ArrowPathIcon className="button-icon" aria-hidden="true" />
-                                <span className="button-text">Connect Services</span>
-                              </button>
-                              {isServicesMenuOpen && (
-                                <div className="services-menu">
-                                  <button
-                                    className={`services-menu-item ${connectedServices.gmail ? 'connected' : ''}`}
-                                    onClick={() => handleServiceConnect('gmail')}
-                                  >
-                                    Gmail
-                                  </button>
-                                  <button
-                                    className="services-menu-item"
-                                    onClick={() => handleServiceConnect('outlook')}
-                                  >
-                                    Outlook (Coming Soon)
-                                  </button>
-                                  <button
-                                    className="services-menu-item"
-                                    onClick={() => handleServiceConnect('calendar')}
-                                  >
-                                    Google Calendar (Coming Soon)
-                                  </button>
-                                </div>
-                              )}
-                            </div>
+              <main className="app-main">
+                <div className="app-content">
+                  <div className="task-list-container">
+                    <div className="card">
+                      <div className="card-header">
+                        <div className="card-header-content">
+                          <h2>Tasks & Opportunities</h2>
+                        </div>
+                        <ServiceConnections
+                          onServiceConnect={handleServiceConnect}
+                          connectedServices={connectedServices}
+                        />
+                      </div>
+                      <div className="toggle-switch-container">
+                        <div className="toggle-switch" onClick={() => setViewMode(viewMode === 'tasks' ? 'opportunities' : 'tasks')}>
+                          <div className={`toggle-option ${viewMode === 'tasks' ? 'active' : ''}`}>
+                            Tasks
                           </div>
-                          <div className="toggle-switch-container">
-                            <div className="toggle-switch" onClick={() => setViewMode(viewMode === 'tasks' ? 'opportunities' : 'tasks')}>
-                              <div className={`toggle-option ${viewMode === 'tasks' ? 'active' : ''}`}>
-                                Tasks
-                              </div>
-                              <div className={`toggle-option ${viewMode === 'opportunities' ? 'active' : ''}`}>
-                                Opportunities
-                              </div>
-                              <div className={`toggle-slider ${viewMode === 'opportunities' ? 'opportunities' : ''}`} />
-                            </div>
+                          <div className={`toggle-option ${viewMode === 'opportunities' ? 'active' : ''}`}>
+                            Opportunities
                           </div>
-                          <div className="card-content">
-                            <TaskList viewMode={viewMode} />
-                          </div>
+                          <div className={`toggle-slider ${viewMode === 'opportunities' ? 'opportunities' : ''}`} />
                         </div>
                       </div>
-                    </div>
-
-                    {/* Chat Section */}
-                    <div className="lg:w-2/3">
-                      <div className="bg-white shadow rounded-lg h-[calc(100vh-12rem)]">
-                        <Chat />
+                      <div className="card-content">
+                        <TaskList viewMode={viewMode} />
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="chat-container">
+                    <div className="card">
+                      <Chat />
                     </div>
                   </div>
                 </div>
               </main>
 
-              {/* Profile Modal */}
               <ProfileModal
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}

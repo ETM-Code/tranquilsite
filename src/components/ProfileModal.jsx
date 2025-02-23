@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useApp } from '../context/AppContext';
 import LinkedInImport from './LinkedInImport';
+import './ProfileModal.css';
 
 const ACCEPTED_FILE_TYPES = {
   'application/pdf': '.pdf',
@@ -29,12 +30,29 @@ const ProfileModal = ({ isOpen, onClose }) => {
   const [uploadStatus, setUploadStatus] = useState({});
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && viewMode === 'raw') {
       fetchRawProfile();
     }
   }, [isOpen, viewMode]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const fetchRawProfile = async () => {
     try {
@@ -210,33 +228,33 @@ const ProfileModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-      <div className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="modal-overlay">
+      <div ref={modalRef} className="modal-content">
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b">
+        <div className="modal-header">
           <h2 className="text-2xl font-bold">User Profile</h2>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setViewMode('view')}
-              className={`px-3 py-1 rounded ${viewMode === 'view' ? 'bg-violet-600 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              className={`mode-button ${viewMode === 'view' ? 'active' : ''}`}
             >
               View
             </button>
             <button
               onClick={() => setViewMode('edit')}
-              className={`px-3 py-1 rounded ${viewMode === 'edit' ? 'bg-violet-600 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              className={`mode-button ${viewMode === 'edit' ? 'active' : ''}`}
             >
               Edit
             </button>
             <button
               onClick={() => setViewMode('raw')}
-              className={`px-3 py-1 rounded ${viewMode === 'raw' ? 'bg-violet-600 text-black': 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              className={`mode-button ${viewMode === 'raw' ? 'active' : ''}`}
             >
               History
             </button>
             <button
               onClick={onClose}
-              className="ml-4 text-gray-500 hover:text-gray-700"
+              className="close-button ml-4"
             >
               ✕
             </button>
@@ -244,7 +262,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="modal-body">
           {viewMode === 'view' && (
             <div className="space-y-4">
               {profile && Object.entries(profile)
@@ -274,16 +292,15 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
               {/* File Upload Area */}
               <div className="relative">
-                <div className="absolute inset-x-0 -top-4 flex items-center justify-center">
-                  <span className="px-4 text-sm text-gray-500 bg-white">or</span>
+                <div className="divider">
+                  <span>or</span>
                 </div>
                 <div
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
                   onDrop={handleDrop}
-                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors
-                    ${dragActive ? 'border-violet-500 bg-violet-50' : 'border-gray-300'}`}
+                  className={`upload-area ${dragActive ? 'drag-active' : ''}`}
                 >
                   <input
                     ref={fileInputRef}
@@ -293,60 +310,87 @@ const ProfileModal = ({ isOpen, onClose }) => {
                     accept={Object.values(ACCEPTED_FILE_TYPES).join(',')}
                     className="hidden"
                   />
-                  <div className="space-y-2">
-                    <p className="text-gray-600">
-                      Drag and drop files here, or click to select files
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700"
-                    >
-                      Select Files
-                    </button>
-                    <p className="text-sm text-gray-500">
-                      Supported formats: PDF, TXT, DOC(X), PPT(X), JPG, PNG
-                    </p>
-                  </div>
+                  <p className="upload-area-text">
+                    Drag and drop files here, or click to select files
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="btn btn-primary"
+                  >
+                    Select Files
+                  </button>
+                  <p className="file-types-text">
+                    Supported formats: PDF, TXT, DOC(X), PPT(X), JPG, PNG
+                  </p>
                 </div>
               </div>
 
               {/* Upload Status */}
-              <div className="space-y-2">
-                {renderUploadStatus()}
+              <div className="upload-status">
+                {Object.entries(uploadStatus).map(([fileName, status]) => (
+                  <div
+                    key={fileName}
+                    className={`status-item ${
+                      status.status === 'error' ? 'error' :
+                      status.status === 'completed' ? 'success' :
+                      'uploading'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span className="status-text">{fileName}</span>
+                      {status.status === 'uploading' && (
+                        <div className="progress-bar">
+                          <div
+                            className="progress-bar-fill"
+                            style={{ width: `${status.progress}%` }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      {status.status === 'error' && (
+                        <span className="status-error">{status.error}</span>
+                      )}
+                      {status.status === 'completed' && (
+                        <span className="status-success">✓</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Manual Input Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label className="form-label">
                     Or enter information manually
                   </label>
                   <textarea
                     value={profileInput}
                     onChange={(e) => setProfileInput(e.target.value)}
                     placeholder="Tell me about your background, experience, interests, goals, or anything else relevant..."
-                    className="w-full h-64 p-3 border rounded-lg"
+                    className="form-textarea"
                     disabled={isLoading}
                   />
                 </div>
                 {error && (
-                  <div className="text-red-500 p-3 rounded bg-red-100">
+                  <div className="error-message">
                     Error: {error}
                   </div>
                 )}
-                <div className="flex justify-between">
+                <div className="button-group">
                   <button
                     type="button"
                     onClick={handleClearProfile}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                    className="btn btn-danger"
                     disabled={isLoading}
                   >
                     Clear Profile
                   </button>
                   <button
                     type="submit"
-                    className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700"
+                    className="btn btn-primary"
                     disabled={isLoading || !profileInput.trim()}
                   >
                     Update Profile
