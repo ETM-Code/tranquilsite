@@ -4,7 +4,6 @@ import { ENDPOINTS } from '../constants/endpoints';
 const makeRequest = async (endpoint, options = {}) => {
   const defaultOptions = {
     mode: 'cors',
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

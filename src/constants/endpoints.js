@@ -4,7 +4,7 @@
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 // You can update this when running ngrok
-const NGROK_URL = "https://1722-185-65-135-247.ngrok-free.app"; // Update this when you start ngrok
+const NGROK_URL = "https://d2b1-89-19-88-232.ngrok-free.app"; // Update this when you start ngrok
 const LOCAL_URL = "http://localhost:8000";  // Make sure this matches your FastAPI port
 
 // Choose the appropriate backend URL
@@ -53,7 +53,6 @@ export const REQUEST_CONFIG = {
     'Accept': 'application/json'
   },
   mode: 'cors',
-  credentials: 'include', // Important for CORS
   timeoutMs: 30000 // 30 second timeout
 };
 
